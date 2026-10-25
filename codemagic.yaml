@@ -1,18 +1,28 @@
-﻿workflows:
+
+workflows:
   pdffit-android:
     name: PDFFit Android APK
     max_build_duration: 60
 
     environment:
-      flutter: stable
+      flutter: 3.47.8
 
     scripts:
+      - name: Check Flutter and Dart versions
+        script: |
+          flutter --version
+          dart --version
+
       - name: Install Flutter dependencies
         script: flutter pub get
 
       - name: Build release APK
-        script: flutter build apk --release
+        script: |
+          flutter build apk --release
+          echo "Checking generated APK files..."
+          find build -type f -name "*.apk"
 
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/**/*.apk
       - /tmp/xcodebuild_logs/*.log
