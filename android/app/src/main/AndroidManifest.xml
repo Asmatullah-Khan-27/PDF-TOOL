@@ -1,0 +1,97 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      Permissions
+      ===========
+      * INTERNET is required by Google Mobile Ads (and by Google Play billing).
+        It is NOT used to upload documents: the app contains no upload code and
+        no document ever leaves the device.
+      * READ_EXTERNAL_STORAGE (API <= 32 only): picked PDFs can arrive as a
+        content:// URI that the provider does not grant read access to.
+      * The Amazon build removes the ads SDK permissions in the flavour manifest
+        (see src/amazon/AndroidManifest.xml).
+
+      Not requested, on purpose:
+      * READ_MEDIA_IMAGES / AUDIO / VIDEO — the plugin manifests pull these in,
+        but PDF Fit reads PDFs through the system file picker (document picker),
+        so it does not need media-library access. Requesting audio/video access
+        for a PDF tool invites store-review questions, so they are removed.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"
+        tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"
+        tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"
+        tools:node="remove" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+    <application
+        android:label="PDF Fit"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true">
+
+        <!-- Google Mobile Ads application id.
+             Defaults to Google's official *test* app id; the release build
+             overrides it with ADMOB_APP_ID via the play flavour. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+
+        <!-- Ads are initialised by the app itself so the Amazon build can skip
+             the SDK entirely on devices without Google Play services. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.initialization_delay"
+            android:value="true" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <!-- Let other apps hand a PDF to PDF Fit ("Open with"). -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:mimeType="application/pdf" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+
+    <queries>
+        <!-- Needed to check whether a PDF viewer is installed before offering
+             "Open", so we can show a clear message instead of failing silently. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/pdf" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>

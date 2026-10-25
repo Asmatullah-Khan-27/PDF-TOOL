@@ -1,0 +1,15 @@
+# Copy this file to android/key.properties and fill in your own values.
+#
+#   cp android/key.properties.template android/key.properties
+#
+# android/key.properties is git-ignored (see android/.gitignore), so your
+# passwords never enter version control. Never commit this file, and never
+# commit the .jks/.keystore it points at.
+#
+# `storeFile` is resolved relative to the android/ directory, so a keystore kept
+# outside the project (recommended) needs an absolute path.
+
+storePassword=REPLACE_WITH_YOUR_STORE_PASSWORD
+keyPassword=REPLACE_WITH_YOUR_KEY_PASSWORD
+keyAlias=upload
+storeFile=/absolute/path/to/pdf-fit-upload.jks

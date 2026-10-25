@@ -1,0 +1,51 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      Amazon Appstore build.
+
+      Amazon Fire OS devices ship without Google Play services, so the AdMob SDK
+      cannot serve ads there. This flavour removes every trace of the ads SDK so
+      the shipped app declares no advertising or ad-tracking permissions:
+
+        * the AdMob application-id meta-data is removed,
+        * the MobileAdsInitProvider (the SDK's startup auto-initialiser) is
+          removed, so nothing from the SDK runs at launch,
+        * AD_ID and the Privacy Sandbox (ACCESS_ADSERVICES_*) permissions, which
+          are injected by the ads SDK manifest, are removed.
+
+      INTERNET is deliberately KEPT: the Amazon Appstore purchase flow needs it
+      to talk to the store. The app itself still never uploads a document — all
+      processing is local.
+
+      AppConfig.adsSupported is false for this flavour, and AdService never calls
+      MobileAds.instance.initialize(), so the Dart side agrees with the manifest.
+    -->
+    <application
+        android:label="PDF Fit"
+        tools:replace="android:label">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            tools:node="remove" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.initialization_delay"
+            tools:node="remove" />
+
+        <provider
+            android:name="com.google.android.gms.ads.MobileAdsInitProvider"
+            android:authorities="${applicationId}.mobileadsinitprovider"
+            tools:node="remove" />
+    </application>
+
+    <!-- Ad-tracking permissions injected by the Google Mobile Ads manifest. -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID"
+        tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION"
+        tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_TOPICS"
+        tools:node="remove" />
+</manifest>
